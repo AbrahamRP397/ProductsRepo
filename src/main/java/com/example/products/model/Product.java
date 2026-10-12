@@ -12,7 +12,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private Long price;
+    private Double price;
     private int stock;
 
     public Product() {
