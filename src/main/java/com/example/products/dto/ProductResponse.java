@@ -6,7 +6,7 @@ public record ProductResponse(
         Double price,
         int stock,
 
-        String categoryNameString,
+        String categoryName,
         Long categoryId
 ) {
 

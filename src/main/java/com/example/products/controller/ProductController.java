@@ -62,7 +62,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> update(@PathVariable Long id, @Valid @RequestBody ProductRequest productUpdate) {
-        Optional<Product> product = service.update(id, toEntity(productUpdate));
+        Optional<Product> product = service.update(id, toEntity(productUpdate), productUpdate.categoryId());
         if (product.isPresent()) {
             return ResponseEntity.ok(toResponse(product.get()));
         }
@@ -80,9 +80,17 @@ public class ProductController {
     }
 
     private ProductResponse toResponse(Product product) {
-        return new ProductResponse(product.getId(), product.getName(), product.getPrice(), product.getStock(), "",0L);
+        String categoryName = product.getCategory() != null ? product.getCategory().getName() : null;
+        Long categoryId = product.getCategory() != null ? product.getCategory().getId() : null;
+        return new ProductResponse(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getStock(),
+                categoryName,
+                categoryId
+        );
     }
-
     private Product toEntity(ProductRequest product) {
         Product productEntity = new Product();
         productEntity.setName(product.name());
