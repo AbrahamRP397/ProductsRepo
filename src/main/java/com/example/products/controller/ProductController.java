@@ -1,8 +1,8 @@
 package com.example.products.controller;
 
 
-import com.example.products.dto.ProductRequest;
-import com.example.products.dto.ProductResponse;
+import com.example.products.dto.product.ProductRequest;
+import com.example.products.dto.product.ProductResponse;
 import com.example.products.model.Product;
 import com.example.products.service.ProductService;
 
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,38 +45,28 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> findById(@PathVariable Long id) {
-        Optional<Product> product = service.findById(id);
-        if (product.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(toResponse(product.get()));
+        Product product = service.findById(id);
+        return ResponseEntity.ok(toResponse(product));
     }
 
     @PostMapping
     public ResponseEntity<ProductResponse> save(@Valid @RequestBody ProductRequest product) {
         Product newProduct = service.save(toEntity(product), product.categoryId());
-        
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(newProduct));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> update(@PathVariable Long id, @Valid @RequestBody ProductRequest productUpdate) {
-        Optional<Product> product = service.update(id, toEntity(productUpdate), productUpdate.categoryId());
-        if (product.isPresent()) {
-            return ResponseEntity.ok(toResponse(product.get()));
-        }
-        
-        return ResponseEntity.notFound().build();
+        Product product = service.update(id, toEntity(productUpdate), productUpdate.categoryId());
+        return ResponseEntity.ok(toResponse(product));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        boolean deleted = service.delete(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
+
 
     private ProductResponse toResponse(Product product) {
         String categoryName = product.getCategory() != null ? product.getCategory().getName() : null;

@@ -1,10 +1,10 @@
-package com.example.products.dto;
+package com.example.products.dto.product;
 
 public record ProductResponse(
         Long id,
         String name,
         Double price,
-        int stock,
+        Integer stock,
 
         String categoryName,
         Long categoryId

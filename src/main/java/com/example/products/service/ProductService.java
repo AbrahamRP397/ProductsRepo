@@ -1,5 +1,6 @@
 package com.example.products.service;
 
+import com.example.products.exception.ResourceNotFoundException;
 import com.example.products.model.Product;
 import com.example.products.model.Category;
 import com.example.products.repository.CategoryRepository;
@@ -25,43 +26,38 @@ public class ProductService {
         return repo.findAll();
     }
 
-    public Optional<Product> findById(Long id) {
-        return repo.findById(id);
+    public Product findById(Long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado: " + id));
     }
 
     public Product save(Product product, Long categoryId) {
         Category category = repoCategory.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada: " + categoryId));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada: " + categoryId));
 
         product.setCategory(category);
         return repo.save(product);
     }
 
-    public Optional<Product> update(Long id, Product newProduct, Long categoryId) {
-        Optional<Product> optional = repo.findById(id);
-
-        if (optional.isEmpty()) {
-            return Optional.empty();
-        }
+    public Product update(Long id, Product newProduct, Long categoryId) {
+        Product product = repo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado: " + id));
 
         Category category = repoCategory.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada: " + categoryId));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada: " + categoryId));
 
-        Product productBD = optional.get();
-        productBD.setName(newProduct.getName());
-        productBD.setPrice(newProduct.getPrice());
-        productBD.setStock(newProduct.getStock());
-        productBD.setCategory(category);
+        product.setName(newProduct.getName());
+        product.setPrice(newProduct.getPrice());
+        product.setStock(newProduct.getStock());
+        product.setCategory(category);
 
-        return Optional.of(repo.save(productBD));
+        return repo.save(product);
     }
 
-    public boolean delete(Long id) {
+    public void delete(Long id) {
         if (!repo.existsById(id)) {
-            return false;
+            throw new ResourceNotFoundException("Producto no encontrado: " + id);
         }
-
         repo.deleteById(id);
-        return true;
     }
 }
