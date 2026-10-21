@@ -1,6 +1,7 @@
 package com.example.products.service;
 
 import com.example.products.exception.ResourceNotFoundException;
+import com.example.products.exception.StockException;
 import com.example.products.model.Product;
 import com.example.products.model.Category;
 import com.example.products.repository.CategoryRepository;
@@ -8,7 +9,6 @@ import com.example.products.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -59,5 +59,19 @@ public class ProductService {
             throw new ResourceNotFoundException("Producto no encontrado: " + id);
         }
         repo.deleteById(id);
+    }
+
+    public Product discount(Long id, Integer discount) {
+
+        Product product = repo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado: " + id)); 
+
+        if (product.getStock() == 0) {
+           throw new StockException("El producto tiene un stock de 0 unidades");
+        }
+        
+        product.setPrice(product.getPrice() * discount / 100);
+    
+        return repo.save(product);
     }
 }

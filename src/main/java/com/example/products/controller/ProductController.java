@@ -1,9 +1,9 @@
 package com.example.products.controller;
 
-
 import com.example.products.dto.product.ProductRequest;
 import com.example.products.dto.product.ProductResponse;
 import com.example.products.model.Product;
+import com.example.products.model.ProductDiscount;
 import com.example.products.service.ProductService;
 
 import jakarta.validation.Valid;
@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -67,6 +68,11 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/{id}/discount")
+    public ResponseEntity<ProductResponse> discount(@PathVariable Long id, @Valid @RequestBody ProductDiscount discount) {
+        Product product = service.discount(id, discount.getDiscount());
+        return ResponseEntity.ok(toResponse(product));
+    }
 
     private ProductResponse toResponse(Product product) {
         String categoryName = product.getCategory() != null ? product.getCategory().getName() : null;
