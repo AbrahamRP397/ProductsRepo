@@ -15,8 +15,6 @@ public class ProductService {
     private final ProductRepository repo;
     private final CategoryRepository repoCategory;
 
-
-
     public ProductService(ProductRepository repo, CategoryRepository repoCategory) {
         this.repo = repo;
         this.repoCategory = repoCategory;
@@ -70,7 +68,7 @@ public class ProductService {
            throw new StockException("El producto tiene un stock de 0 unidades");
         }
         
-        product.setPrice(product.getPrice() * discount / 100);
+        product.setPrice(product.getPrice() * (100 - discount) / 100);
     
         return repo.save(product);
     }

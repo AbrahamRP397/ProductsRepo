@@ -11,5 +11,5 @@ public class ProductDiscount {
     @NotNull 
     @Min (1)
     @Max (100)
-    @PositiveOrZero Integer discount;
+    @PositiveOrZero private Integer discount;
 }

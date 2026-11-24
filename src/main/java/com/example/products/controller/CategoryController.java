@@ -17,10 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/categories")
 public class CategoryController {
 
     private final CategoryService service;
@@ -31,10 +32,10 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> findAll() {
-        List<CategoryResponse> categories = service.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+        List<CategoryResponse> categories = new ArrayList<>();
+        for (Category category : service.findAll()) {
+            categories.add(toResponse(category));
+        }
         return ResponseEntity.ok(categories);
     }
 

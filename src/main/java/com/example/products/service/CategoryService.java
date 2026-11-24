@@ -45,13 +45,13 @@ public class CategoryService {
 
     @Transactional
     public void delete(Long id) {
-        if (!repo.existsById(id)) {
-            throw new ResourceNotFoundException("Categoría no encontrada: " + id);
-        }
+        Category category = repo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada: " + id));
+
         if (productRepo.existsByCategoryId(id)) {
             throw new ResourceNotFoundException(
                     "No se puede eliminar la categoría " + id + ": tiene productos asociados");
         }
-        repo.deleteById(id);
+        repo.delete(category);
     }
 }
